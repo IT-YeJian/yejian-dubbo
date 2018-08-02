@@ -12,10 +12,6 @@
     <!--使用zk广播注册中心暴露服务地址-->
     <dubbo:registry address="127.0.0.1:2181" protocol="zookeeper"/>
 
-
-    <!--声明需要暴露的服务接口-->
-    <dubbo:service interface="com.yejian.common.service.DemoService" ref="demoService"/>
-
     <!--生成远程服务代理,可以和本地bean一样使用demoService-->
     <dubbo:reference id="demoService" interface="com.yejian.common.service.DemoService" />
 </beans>
