@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:task="http://www.springframework.org/schema/task" xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context-4.0.xsd
+            http://www.springframework.org/schema/task
+            http://www.springframework.org/schema/task/spring-task.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <context:component-scan base-package="com.yejian.spring"/>
+
+    <!--<bean class="org.springframework.beans.factory.config.PropertyOverrideConfigurer">
+        <property name="locations" value="pool-adjustment.properties">
+        </property>
+    </bean>-->
+
+    <!--<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">-->
+        <!--<property name="locations">-->
+            <!--<array>-->
+                <!--<value>classpath:ioc.properties</value>-->
+            <!--</array>-->
+        <!--</property>-->
+    <!--</bean>-->
+
+    <bean id="datePropetyEditor" class="com.yejian.spring.model.DatePropertyEditor">
+        <property name="datePattern">
+            <value>yyyy/MM/dd</value>
+        </property>
+    </bean>
+
+    <bean id="dateFOO" class="com.yejian.spring.model.DateFOO">
+        <property name="date" value="2018/09/03"/>
+    </bean>
+
+    <bean class="org.springframework.beans.factory.config.CustomEditorConfigurer">
+        <property name="customEditors">
+            <map>
+                <entry key="java.util.Date">
+                    <ref bean="datePropetyEditor"/>
+                </entry>
+            </map>
+        </property>
+    </bean>
+
+
+
+    <bean id="myUser" class="com.yejian.spring.model.MyUser">
+        <property name="name" value="${name}"/>
+        <property name="age" value="${age}"/>
+    </bean>
+    <bean id="phone" class="com.yejian.spring.PhoneImpl"/>
+
+    <bean id="address" class="com.yejian.spring.model.Address" scope="prototype">
+        <property name="city" value="China"/>
+    </bean>
+
+    <!--构造方法注入 和 setter方式注入-->
+    <bean id="person" class="com.yejian.spring.model.Person" init-method="init" destroy-method="des">
+        <constructor-arg index="0" value="yejian"/>
+        <constructor-arg index="1" value="1120"/>
+        <!--<property name="address" ref="address"/>-->
+        <!--<lookup-method name="getAddress" bean="address"/>-->
+        <property name="phone" ref="phone"/>
+        <property name="dateTime" ref="nextDay"/>
+        <property name="objectFactory" ref="addressBeanFactory"/>
+    </bean>
+    <bean id="nextDay" class="com.yejian.spring.factory.NextDayDateFactoryBean"/>
+
+
+    <bean id="addressBeanFactory" class="org.springframework.beans.factory.config.ObjectFactoryCreatingFactoryBean">
+        <property name="targetBeanName">
+            <idref bean="address"/>
+        </property>
+    </bean>
+
+  <!--  <bean id="helloWorldService" class="com.yejian.spring.HelloWorldServiceImpl">
+
+    </bean>-->
+
+
+    <bean id="dowJonesNewsListener" class="com.yejian.spring.impl.DowJonesNewsListener"></bean>
+    <bean id="dowJonesNewsPersister" class="com.yejian.spring.impl.DowJonesNewsPersister"></bean>
+
+    <bean id="fxNewsProvider" class="com.yejian.spring.model.FXNewsProvider">
+        <constructor-arg index="0" ref="dowJonesNewsListener" />
+        <constructor-arg index="1">
+            <ref bean="dowJonesNewsPersister"/>
+        </constructor-arg>
+        <replaced-method name="getAndPersisterNew" replacer="dowJonesPersisterMethodReplacer"/>
+    </bean>
+    <bean id="dowJonesPersisterMethodReplacer" class="com.yejian.spring.impl.DowJonesPersisterMethodReplacer"/>
+
+    <!--<bean id="threadCounter"-->
+          <!--class="com.yejian.spring.springexample.Counter"-->
+          <!--scope="thread" />-->
+
+    <!--<bean id="disposableThreadCounter"-->
+          <!--class="com.yejian.spring.springexample.DisposableCounter"-->
+          <!--scope="thread" >-->
+        <!--<aop:scoped-proxy/>-->
+    <!--</bean>-->
+
+    <!--<bean class="org.springframework.beans.factory.config.CustomScopeConfigurer">-->
+        <!--<property name="scopes">-->
+            <!--<map>-->
+                <!--<entry key="thread">-->
+                    <!--<bean class="com.yejian.spring.springexample.ThreadScope"/>-->
+                <!--</entry>-->
+            <!--</map>-->
+        <!--</property>-->
+    <!--</bean>-->
+
+    <!--<task:executor id="taskExecutor"-->
+                   <!--pool-size="5-10"-->
+                   <!--queue-capacity="10" />-->
+
+    <!--<bean id="executorService"-->
+          <!--class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">-->
+        <!--<property name="corePoolSize" value="5" />-->
+        <!--<property name="maxPoolSize" value="10" />-->
+        <!--<property name="queueCapacity" value="10" />-->
+        <!--<property name="threadFactory">-->
+            <!--<bean class="org.springframework.scheduling.concurrent.CustomizableThreadFactory">-->
+                <!--<property name="threadNamePrefix" value="executorService-" />-->
+            <!--</bean>-->
+        <!--</property>-->
+    <!--</bean>-->
+
+</beans>
